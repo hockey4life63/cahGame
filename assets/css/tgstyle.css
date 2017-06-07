@@ -139,6 +139,7 @@ p.shBtn {
     font-weight: 400;
     font-size: 16px;
     margin: auto;
+    display: none;
 }
 
 .white-text {
@@ -153,6 +154,7 @@ p.shBtn {
     border-radius: 20px;
     font-weight: 300 !important;
     font-size: .8em !important;
+    display: none;
 }
 
 #right-height {
@@ -343,7 +345,7 @@ p.shBtn {
     border-radius: 6px;
     padding: 10px 0;
     top: -27px;
-    right: 102%; 
+    right: 102%;
     margin-left: -140px;
     position: absolute;
     z-index: 3;
@@ -353,21 +355,22 @@ p.shBtn {
     content: " ";
     position: absolute;
     top: 50%;
-    left: 100%; /* To the right of the tooltip */
+    left: 100%;
+    /* To the right of the tooltip */
     margin-top: -10px;
     border-width: 8px;
     border-style: solid;
     border-color: transparent transparent transparent black;
 }
 
-
-#urbanDict, #pearsonDict {
+#urbanDict,
+#pearsonDict {
     cursor: pointer;
 }
 
-#urbanDict:hover, #pearsonDict:hover {
+#urbanDict:hover,
+#pearsonDict:hover {
     color: red;
-
 }
 
 
@@ -375,7 +378,7 @@ p.shBtn {
 
 .loading {
     text-align: center;
-    width: 20%;
+    /*width: 20%;*/
     height: 80px;
     margin: 0 auto;
 }
@@ -529,4 +532,45 @@ p.shBtn {
     padding: 2px 16px;
     background-color: #5cb85c;
     color: white;
+}
+
+#selectedBlack div .flip-container {
+    overflow-y: auto;
+    background: black;
+}
+
+.glow {
+    -webkit-animation: neon 1.5s ease-in-out infinite alternate;
+    -moz-animation: neon 1.5s ease-in-out infinite alternate;
+    animation: neon 1.5s ease-in-out infinite alternate;
+    -webkit-transition: all 0.5s;
+    -moz-transition: all 0.5s;
+    transition: all 0.5s;
+}
+
+@-moz-keyframes neon {
+    from {
+        box-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #ff00de, 0 0 40px #ff00de, 0 0 70px #ff00de, 0 0 80px #ff00de;
+    }
+    to {
+        box-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px #ff00de, 0 0 20px #ff00de, 0 0 35px #ff00de, 0 0 40px #ff00de;
+    }
+}
+
+@-webkit-keyframes neon {
+    from {
+        box-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #ff00de, 0 0 40px #ff00de, 0 0 70px #ff00de, 0 0 80px #ff00de;
+    }
+    to {
+        box-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px #ff00de, 0 0 20px #ff00de, 0 0 35px #ff00de, 0 0 40px #ff00de;
+    }
+}
+
+@keyframes neon {
+    from {
+        box-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #ff00de, 0 0 40px #ff00de, 0 0 70px #ff00de, 0 0 80px #ff00de;
+    }
+    to {
+        box-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px #ff00de, 0 0 20px #ff00de, 0 0 35px #ff00de, 0 0 40px #ff00de;
+    }
 }

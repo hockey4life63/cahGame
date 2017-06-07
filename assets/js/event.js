@@ -38,7 +38,11 @@ $("#btn-global-chat").on("click", function() {
     let message = $("#global-input").val().trim();
     $("#global-input").val("")
     if (message === "") {
-
+        toastr.error('Your message was empty...maybe try typing something...', '', {
+            closeButton: true,
+            timeout: 10000,
+            positionClass: 'toast-bottom-right'
+        });
     } else {
         globalChat.push().set({
             message: message,
@@ -48,36 +52,61 @@ $("#btn-global-chat").on("click", function() {
 
     }
 })
+$('#btn-chat').on('click', chatCallback);
 
-globalChat.on("child_added", function(snap) {
-    if (moment().valueOf() - snap.val().timeStamp >= 3600000) {
-        globalChat.child(snap.key).remove()
-    } else if (moment().valueOf() - snap.val().timeStamp <= 300000) {
-        console.log(moment(snap.val().timeStamp).format("h:mm"))
-        let newDiv = $("<div>");
-        let message = $("<p>").text(snap.val().message);
-        let name = $("<strong>").text(snap.val().displayName + ":");
-        message.prepend(name);
-        newDiv.append(message);
-        $("#global-chat").append(newDiv)
+firebase.auth().onAuthStateChanged(function(user) {
+    if (user) {
+        $(".front-page").hide();
+        $("body").addClass("coffee-table-bg");
+        $("#myNav").show()
+        $("#main-view").show();
+        $(".hide-create").show();
+        fireObj.globalChatOn();
+        currentUid = user.uid;
+        userRef.child(currentUid).once("value", function(snap) {
+            currentDisplayName = snap.val().displayName;
+            let game = snap.val().joinedGame;
+            if (game != "") {
+                gameRef.once("value", function(snap) {
+                        if (snap.child(game).exists() && snap.child(game).child("host").val() !== currentDisplayName) {
+                            let players = snap.child(game).val().players;
+                            playerRef.child(players).once("value", function(snap) {
+                                if (snap.child(currentUid).exists()) {
+                                    fireObj.gameState(game, true);
+                                } else {
+                                    userRef.child(currentUid).update({
+                                        joinedGame: ""
+                                    })
+                                }
+
+                            })
+
+                        } else {
+                            userRef.child(currentUid).update({
+                                joinedGame: ""
+                            })
+                        }
+                    }) //once
+            } //if
+
+        }).then(function() {
+            $("#user-name").text(currentDisplayName);
+        })
+        fireObj.joinGameEvent();
+    } else {
+        fireObj.joinGameOff()
+        fireObj.globalChatOff();
+        $(".front-page").show();
+        $("body").removeClass("coffee-table-bg");
+        $("#myNav").hide()
+        $("#main-view").hide();
+        $(".hide-create").hide();
+        $(".hide-waiting").hide();
     }
+
 
 })
 
-
-
-
-// gameRef.orderByChild('state').equalTo(state.open).on('child_added', function(snap) {
-//     var hostName = snap.val().host;
-//     var joinBtn = '<button class="btn btn-default" id="' + snap.key + '">Join</button>';
-
-//     var newGameData = $('<tr>').html('<td>' + hostName + '</td><td>' + snap.val().totalPlayers + '/' + snap.val().playerLimit + '</td><td>' + snap.val().winLimit + '</td><td>' + joinBtn + '</td>');
-//     $('#table-row').append(newGameData);
-
-//     $('#' + snap.key).on('click', function() {
-//         fireObj.gameState(snap.key);
-//     });
-// });
 
 
 $("#create-game").on("click", function(event) {

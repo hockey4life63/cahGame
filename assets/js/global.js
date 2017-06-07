@@ -35,28 +35,43 @@ let state = {
     gameOver: 7,
     quitGame: 8
 }
-firebase.auth().onAuthStateChanged(function(user) {
-    if (user) {
-        $(".front-page").hide();
-        $("body").addClass("coffee-table-bg");
-        $("#myNav").show()
-        $("#main-view").show();
-        $(".hide-create").show();
-        currentUid = user.uid;
-        userRef.child(currentUid).child("displayName").once("value", function(snap) {
-            currentDisplayName = snap.val();
-        }).then(function() {
-            $("#user-name").text(currentDisplayName);
-        })
-        fireObj.joinGameEvent();
+
+let chatCallback = function() {
+    let message = $('#btn-input').val().trim();
+    $('#btn-input').val('');
+    if (message === '') {
+        toastr.error('Your message was empty...maybe try typing something...', '', {
+            closeButton: true,
+            timeout: 10000,
+            positionClass: 'toast-bottom-right'
+        });
+    } else if (message.startsWith('/')) {
+        api.checkCall(message);
     } else {
-        $(".front-page").show();
-        $("body").removeClass("coffee-table-bg");
-        $("#myNav").hide()
-        $("#main-view").hide();
-        $(".hide-create").hide();
-        $(".hide-waiting").hide();
+        // check if searchQuery starts with '/', for api call error
+        currentGameRef.child('chat').push().set({
+            message: message,
+            displayName: currentDisplayName,
+            timeStamp: firebase.database.ServerValue.TIMESTAMP
+        });
     }
+}
 
 
-})
+toastr.options = {
+    "closeButton": true,
+    "debug": false,
+    "newestOnTop": false,
+    "progressBar": false,
+    "positionClass": "toast-bottom-right",
+    "preventDuplicates": false,
+    "onclick": null,
+    "showDuration": "300",
+    "hideDuration": "1000",
+    "timeOut": "10000",
+    "extendedTimeOut": "5000",
+    "showEasing": "swing",
+    "hideEasing": "linear",
+    "showMethod": "fadeIn",
+    "hideMethod": "fadeOut"
+}

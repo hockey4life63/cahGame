@@ -38,7 +38,7 @@ function cardFlip(el) {
     } else {
         $(el).addClass('flip');
     }
-    console.log(el.id);
+
 }
 
 
@@ -50,25 +50,58 @@ $('.flip-container').on('click', function() {
     } else {
         $(this).addClass('flip');
     }
-    console.log(this.id);
+
 })
 
 // NEW WHITE CARD TEST //
-var card = 'card2'; //data from obj
-var whiteCard = 'My humps.'; //data from obj
+// var card = 'card2'; //data from obj
+// var whiteCard = 'My humps.'; //data from obj
 
-$('#' + card).on('click', function() {
-    makeElement.newWhiteCard()
-})
+// $('#' + card).on('click', function() {
+//     makeElement.newWhiteCard()
+// })
+function setCaretPosition(elemId, caretPos) {
+    var elem = document.getElementById(elemId);
 
+    if(elem != null) {
+        if(elem.createTextRange) {
+            var range = elem.createTextRange();
+            range.move('character', caretPos);
+            range.select();
+        }
+        else {
+            if(elem.selectionStart) {
+                elem.focus();
+                elem.setSelectionRange(caretPos, caretPos);
+            }
+            else
+                elem.focus();
+        }
+    }
+}
+
+$('.chat_input').on('focusin', function() {
+    // chatCallback
+    $('#btn-input').on('keyup', function(event) {
+        if (event.keyCode === 13) {
+            chatCallback();
+        }
+    });
+});
+
+$('.chat_input').on('focusout', function() {
+    $('#btn-input').off('keyup');
+});
 
 $('#urbanDict').on('click', function() {
-    $('.chat_input').val('/Urban " "');
+    $('.chat_input').val('/Urban ""');
+    setCaretPosition('btn-input', 8);
     $('.urbantip .tooltiptext').hide();
 })
 
 $('#pearsonDict').on('click', function() {
-    $('.chat_input').val('/Dict " "');
+    $('.chat_input').val('/Dict ""');
+    setCaretPosition('btn-input', 7);
     $('.urbantip .tooltiptext').hide();
 })
 

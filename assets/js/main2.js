@@ -4,6 +4,7 @@ fireObj = {
             firebase.auth().signInWithEmailAndPassword(email, password).catch(function(error) {
                 var errorCode = error.code;
                 var errorMessage = error.message;
+                toastr.error(errorMessage, errorCode, { positionClass: "toast-top-center" })
             })
 
         },
@@ -16,10 +17,13 @@ fireObj = {
 
             if (password !== passConfrim) {
                 //checks taht passwords match
-                return "passwords dont match";
+                toastr.error("Passwords don't match", "Error", { positionClass: "toast-top-center" })
+                return
             } else if (!(password.length >= 6)) {
                 //checks that it is at least 6 char long
-                return "password is not long enough must be at least 6 characters long"
+                toastr.error("Password is not long enough to satisfy anyone. Must be at least 6 characters long", "Error", { positionClass: "toast-top-center" })
+
+                return
             } else {
                 for (var i = 0; i < password.length; i++) {
                     //makes sure it has at least 1 number and letter
@@ -40,9 +44,11 @@ fireObj = {
 
             } //else
             if (!containsNumber) {
-                return "must contain at least one number";
+                toastr.error("Must contain at least one number", "Error", { positionClass: "toast-top-center" })
+                return;
             } else if (!containsLetter) {
-                return "must contain at least one letter";
+                toastr.error("Must contain at least one letter", "Error", { positionClass: "toast-top-center" })
+                return;
             }
 
             this.createAcct(password, displayName, email);
@@ -58,7 +64,8 @@ fireObj = {
                 }
             }).then(function() {
                 if (nameExists) {
-                    // return "that displayName already exists try another"
+                    toastr.error("That display name already exists", "Error", { positionClass: "toast-top-center" })
+                        // return "that displayName already exists try another"
                 } else {
                     firebase.auth().createUserWithEmailAndPassword(email, password).catch(function(error) {
                         var errorCode = error.code;
@@ -110,36 +117,54 @@ fireObj = {
             }
         },
         globalChatOn: function() {
+            $("#global-chat").html("");
             globalChat.on("child_added", function(snap) {
-                //TODO: call add new MSG with snap.val() to global chat
+                if (moment().valueOf() - snap.val().timeStamp >= 3600000) {
+                    globalChat.child(snap.key).remove()
+                } else if (moment().valueOf() - snap.val().timeStamp <= 300000) {
+                    console.log(moment(snap.val().timeStamp).format("h:mm"))
+                    let newDiv = $("<div>");
+                    let message = $("<p>").text(snap.val().message);
+                    let name = $("<strong>").text(snap.val().displayName + ":");
+                    message.prepend(name);
+                    newDiv.append(message);
+                    $("#global-chat").append(newDiv)
+                }
+
             })
         },
-        gameChatOn: function(key) {
-            gameRef.child(key).child("chat").on("child_added", function(snap) {
-                //TODO: call add new MSG with snap.val() to game chat
-            })
-        },
-        gameChatOff: function(key) {
-            gameRef.child(key).child("chat").off();
+
+        globalChatOff: function(key) {
+            globalChat.off();
         },
         joinGameEvent: function() {
             gameRef.orderByChild("state").equalTo(state.open).on("child_added", function(snap) {
-                makeElement.buildOpenGame(snap.key, snap.val().host, snap.val().winLimit, snap.val().playerLimit);
+                if (snap.val().totalPlayers !== parseInt(snap.val().playerLimit)) {
+                    makeElement.buildOpenGame(snap.key, snap.val().host, snap.val().winLimit, snap.val().playerLimit);
+                }
 
             })
             gameRef.on("child_changed", function(snap) {
-                if (snap.val().state !== state.open) {
+                if (snap.val().state !== state.open || snap.val().totalPlayers === parseInt(snap.val().playerLimit)) {
+
                     $("#" + snap.key + "Open").remove()
 
                 }
-                // 
+
+            })
+            gameRef.on("child_removed", function(snap) {
+                $("#" + snap.key + "Open").remove()
+
             })
 
+        },
+        joinGameOff: function() {
+            gameRef.off("child_added");
+            gameRef.off("child_changed")
         },
 
         createNewGame: function(playerCount, winlimit) {
             let newGameRef = gameRef.push();
-
             let newPlayerRef = playerRef.push();
             let playerKey = newPlayerRef.key
             let whiteCount = 0;
@@ -152,7 +177,9 @@ fireObj = {
                 white: [],
                 black: []
             };
-            //grab the key to the enw game
+            gameRef.child(newGameRef.key).onDisconnect().remove()
+            playerRef.child(newPlayerRef.key).onDisconnect().remove()
+                //grab the key to the enw game
             currentGame = newGameRef.key;
             //build the game obj for database
             let gameObj = {
@@ -188,6 +215,10 @@ fireObj = {
                     chosenWhiteCard1: "",
                     chosenWhiteCard2: "",
                     uid: currentUid,
+                    playerState: {
+                        connected: true,
+                        timeStamp: 0
+                    },
                     displayName: currentDisplayName,
                     playerBlackCount: 0
                 }
@@ -210,17 +241,7 @@ fireObj = {
                         for (var i = 0; i < blackCount; i++) {
                             tempArray.black.push(i);
                         }
-                        //create shuffled arrays of indexs
-                        // for (var i = 0; i < blackCount; i++) {
-                        //     let rand = Math.floor(Math.random() * tempArray.black.length);
-                        //     shuffledArray.black.push(tempArray.black[rand]);
-                        //     tempArray.black.splice(rand, 1);
-                        // }
-                        // for (var i = 0; i < whiteCount; i++) {
-                        //     let rand = Math.floor(Math.random() * tempArray.white.length);
-                        //     shuffledArray.white.push(tempArray.white[rand]);
-                        //     tempArray.white.splice(rand, 1);
-                        // }
+
                         while (count <= blackCount) {
                             let newArray = [];
                             for (var i = 0; i < 50; i++) {
@@ -255,34 +276,10 @@ fireObj = {
                 //make new game and add shuffled arrays
                 newGameRef.set(gameObj).then(function() {
                     newGameRef.child("blackOrder").set(shuffledArray.black)
-                        // let count = 0;
-                        // let set = 0;
-                        // //loops white total iterations are les sthat total count
-                        // while (count < blackCount) {
-                        //     //loops thru 50 at a time
-                        //     for (var i = 0; i < 50; i++) {
-                        //         if (shuffledArray.black[count]) {
 
-                    //             newGameRef.child("blackOrder").child(set).child(i).set(shuffledArray.black[count]);
-                    //         } //if
-                    //         count++;
-                    //     } //for
-                    //     set++;
-                    // } //while
                 }).then(function() {
                     newGameRef.child("whiteOrder").set(shuffledArray.white)
-                        // let count = 0;
-                        // let set = 0;
-                        // while (count < whiteCount) {
-                        //     for (var i = 0; i < 50; i++) {
 
-                    //         if (shuffledArray.white[count]) {
-                    //             newGameRef.child("whiteOrder").child(set).child(i).set(shuffledArray.white[count]);
-                    //         }
-                    //         count++;
-                    //     }
-                    //     set++;
-                    // }
                     fireObj.gameState(currentGame);
                 })
             })
@@ -303,6 +300,10 @@ fireObj = {
                     chosenWhiteCard1: "",
                     chosenWhiteCard2: "",
                     uid: currentUid,
+                    playerState: {
+                        connected: true,
+                        timeStamp: 0
+                    },
                     displayName: currentDisplayName,
                     playerBlackCount: 0
                 }
@@ -319,7 +320,7 @@ fireObj = {
                     let cards = []
                         //deal out 7 cards
                     for (var i = 0; i < 7; i++) {
-                        //checsk if second child is above 49 whichs means it stored in the nest
+                        //checsk if second child is above 49 whichs means it stored in the next firstchild
                         if (secondChild + i > 49) {
                             cards.push(whiteOrder[firstChild + 1][(secondChild + i) - 50])
                         } else {
@@ -383,8 +384,8 @@ fireObj = {
         },
         dealOneCard: function(whiteOrder, host, card) {
             currentGameRef.child("whiteCount").transaction(function(snap) {
-                console.log(whiteOrder)
-                    //grab whitecount
+
+                //grab whitecount
                 let firstChild = Math.floor(snap / 50);
                 let secondChild = (snap % 50);
                 let newCard = whiteOrder[firstChild][secondChild];
@@ -401,13 +402,14 @@ fireObj = {
             });
         },
         showAllChoices: function(currentBlack, currentTurn, pick, host) {
+            //display modal
             modal.style.display = "block";
+            toastr.clear();
             currentPlayerRef.once("value", function(snap) {
                 //create a obj to sotre all teh cards
                 let blackCards = {};
                 snap.forEach(function(childSnap) {
                         //make sure it isn this users turn
-                        console.log(childSnap.key, childSnap.val().key)
                         if (currentTurn !== childSnap.key) {
                             let key = childSnap.key
                             blackCards[key] = {}
@@ -423,10 +425,12 @@ fireObj = {
                 let players = Object.keys(blackCards)
                 let total = players.length
                 for (var i = 0; i < total; i++) {
+                    //get random player
                     let randNum = Math.floor(Math.random() * players.length)
                     let rand = players[randNum]
 
                     if (pick === 1) {
+                        //find white card text
                         let firstPick = blackCards[rand].firstPick
                         let firstNum = Math.floor(firstPick / 50)
                         let secondNum = firstPick % 50
@@ -435,7 +439,14 @@ fireObj = {
 
 
                         }).then(function() {
-                            buildBlackSelected(currentBlack, blackCards[rand].name, blackCards[rand].firstPick, host)
+                            let args = {
+                                    currentBlack: currentBlack,
+                                    displayName: blackCards[rand].name,
+                                    firstPick: blackCards[rand].firstPick,
+                                    host: host
+                                }
+                                //build display black card with white card text
+                            buildBlackSelected(args)
                         })
 
                     }
@@ -457,12 +468,22 @@ fireObj = {
                                 console.log("second pick:", blackCards[rand].secondPick, card.val())
 
                             }).then(function() {
-                                buildBlackSelected(currentBlack, blackCards[rand].name, blackCards[rand].firstPick, blackCards[rand].secondPick, host)
+                                let args = {
+                                    currentBlack: currentBlack,
+                                    displayName: blackCards[rand].name,
+                                    firstPick: blackCards[rand].firstPick,
+                                    secondPick: blackCards[rand].secondPick,
+                                    host: host
+                                }
+                                buildBlackSelected(args)
                             })
                         })
                     }
                     players.splice(randNum, 1)
 
+                }
+                if (currentTurn === (host ? "host" : currentUid)) {
+                    toastr.warning("<h1>Pick a Winner</h1>", "", { positionClass: "toast-top-full-width", preventDuplicates: true, timeOut: 0, extendedTimeOut: 0 })
                 }
 
             })
