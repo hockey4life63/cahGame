@@ -165,7 +165,6 @@ fireObj = {
 
         createNewGame: function(playerCount, winlimit) {
             let newGameRef = gameRef.push();
-
             let newPlayerRef = playerRef.push();
             let playerKey = newPlayerRef.key
             let whiteCount = 0;
@@ -178,7 +177,9 @@ fireObj = {
                 white: [],
                 black: []
             };
-            //grab the key to the enw game
+            gameRef.child(newGameRef.key).onDisconnect().remove()
+            playerRef.child(newPlayerRef.key).onDisconnect().remove()
+                //grab the key to the enw game
             currentGame = newGameRef.key;
             //build the game obj for database
             let gameObj = {
@@ -214,6 +215,10 @@ fireObj = {
                     chosenWhiteCard1: "",
                     chosenWhiteCard2: "",
                     uid: currentUid,
+                    playerState: {
+                        connected: 1,
+                        timeStamp: 0
+                    },
                     displayName: currentDisplayName,
                     playerBlackCount: 0
                 }
@@ -227,7 +232,6 @@ fireObj = {
                         //grabs total black card count
                         blackCount = snap.val();
                     }).then(function() {
-                        console.log("black:" + blackCount + " white:" + whiteCount)
                         let count = 0;
                         //creats 2 arrays of all indexs
                         for (var i = 0; i < whiteCount; i++) {
@@ -295,6 +299,10 @@ fireObj = {
                     chosenWhiteCard1: "",
                     chosenWhiteCard2: "",
                     uid: currentUid,
+                    playerState: {
+                        connected: 1,
+                        timeStamp: 0
+                    },
                     displayName: currentDisplayName,
                     playerBlackCount: 0
                 }
@@ -395,6 +403,7 @@ fireObj = {
         showAllChoices: function(currentBlack, currentTurn, pick, host) {
             //display modal
             modal.style.display = "block";
+            $("#hideCards").wrap("<div class='blur'></div>");
             toastr.clear();
             currentPlayerRef.once("value", function(snap) {
                 //create a obj to sotre all teh cards

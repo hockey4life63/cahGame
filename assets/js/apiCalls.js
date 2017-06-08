@@ -40,12 +40,16 @@ let api = {
             this.callUrbanApi(word);
         } else {
             //display error
-            toastr.error('Error: try (/Dict "word") or(/Urban "word")');
+            toastr.error('Error: try (/Dict "word") or(/Urban "word")', '', {
+                closeButton: true,
+                timeout: 10000,
+                positionClass: 'toast-bottom-right'
+            });
             console.log('Error: try (/Dict "word") or(/Urban "word")')
         }
     },
     displayDef: function(def, word, dict) {
-        console.log(word + " : " + def)
+        // console.log(word + " : " + def)
         let newDiv = $("<div>");
         let newDef = $("<p>").text(def);
         let newWord = $("<strong>").text('(' + dict + ' Dict) - ' + word + ": ");
@@ -54,24 +58,6 @@ let api = {
         $('#chat').append(newDiv);
     }
 }
-
-
-$('#btn-chat').on('click', function() {
-    let message = $('#btn-input').val().trim();
-    $('#btn-input').val('');
-    if (message === '') {
-        toastr.error('Your message was empty...maybe try typing something...');
-    } else if (message.startsWith('/')) {
-        api.checkCall(message);
-    } else {
-        // check if searchQuery starts with '/', for api call error
-        currentGameRef.child('chat').push().set({
-            message: message,
-            displayName: currentDisplayName,
-            timeStamp: firebase.database.ServerValue.TIMESTAMP
-        });
-    }
-});
 
 // currentChatRef.on('child_added', function(snap) {
 //     console.log(snap.val());

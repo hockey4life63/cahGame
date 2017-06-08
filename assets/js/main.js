@@ -679,10 +679,10 @@ fireObj = {
 // THIS IS THE FRONT END JS CODE 
 // DATABASE AND GAME LOGIC I ABOVE THIS!!!
 // 
-// 
+// buildSentMessage(player, text, time, location)
 // 
 makeElement = {
-    buildSentMessage: function(player, message, time) {
+    buildSentMessage: function(player, text, time, location) {
 
         var messageContainer = $('<div>').addClass('row msg_container base_sent');
 
@@ -690,8 +690,10 @@ makeElement = {
         messageContainer.append(messageHolder);
         var messageBox = $('<div>').addClass('messages msg_sent');
         messageHolder.append(messageBox);
-        var message = $('<p>').html(sentMessageText);
+        var message = $('<p>').html(text);
         messageBox.append(message);
+        var name = $('<p>').html(player)
+        messageBox.append(name);
 
         var avatarContainer = $('<div>').addClass('col-md-2 col-xs-2 avatar');
         messageContainer.append(avatarContainer);
@@ -702,7 +704,7 @@ makeElement = {
 
         $('#chat').append(messageContainer);
     },
-    buildReceivedMessage: function(player, message, time) {
+    buildReceivedMessage: function(player, text, time, location) {
 
         var messageContainer = $('<div>').addClass('row msg_container base_receive');
 
@@ -717,8 +719,10 @@ makeElement = {
         messageContainer.append(messageHolder);
         var messageBox = $('<div>').addClass('messages msg_receive');
         messageHolder.append(messageBox);
-        var message = $('<p>').html(receivedMessageText);
+        var message = $('<p>').html(text);
         messageBox.append(message);
+        var name = $('<p>').html(player)
+        messageBox.append(name);
 
         $('#chat').append(messageContainer);
     },
@@ -957,27 +961,7 @@ $('.hide-waiting').hide();
 
 /////////////// MODAL  /////////////////
 
-// Get the modal
-var modal = document.getElementById('myModal');
-
-// Get the button that opens the modal
-var btn = document.getElementById("myBtn");
-
-// Get the <span> element that closes the modal
-var span = document.getElementsByClassName("close")[0];
-
-// When the user clicks the button, open the modal 
-btn.onclick = function() {
-    modal.style.display = "block";
-    buildBlackSelected();
-}
-
 // When the user clicks anywhere outside of the modal, close it
-window.onclick = function(event) {
-    if (event.target == modal) {
-        modal.style.display = "none";
-    }
-}
 
 
 function buildBlackSelected() {

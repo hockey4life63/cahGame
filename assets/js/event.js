@@ -4,7 +4,6 @@ $('.hide-game-center').hide();
 $("#susubmit").on("click", function() {
     let email = $("#emailInput").val().trim();
     let password = $("#pwone").val();
-    console.log(email, password)
     if (email === "" || password === "") {
         $(".errormsg").text("password or email is blank").show();
     } else {
@@ -34,20 +33,9 @@ $("#forceStart").on("click", function() {
         state: state.ready
     })
 })
-$("#btn-global-chat").on("click", function() {
-    let message = $("#global-input").val().trim();
-    $("#global-input").val("")
-    if (message === "") {
-        toastr.error('Your message was empty...maybe try typing something...');
-    } else {
-        globalChat.push().set({
-            message: message,
-            displayName: currentDisplayName,
-            timeStamp: firebase.database.ServerValue.TIMESTAMP
-        })
+$("#btn-global-chat").on("click", globalChatCallback);
+$('#btn-chat').on('click', chatCallback);
 
-    }
-})
 firebase.auth().onAuthStateChanged(function(user) {
     if (user) {
         $(".front-page").hide();
@@ -57,8 +45,32 @@ firebase.auth().onAuthStateChanged(function(user) {
         $(".hide-create").show();
         fireObj.globalChatOn();
         currentUid = user.uid;
-        userRef.child(currentUid).child("displayName").once("value", function(snap) {
-            currentDisplayName = snap.val();
+        userRef.child(currentUid).once("value", function(snap) {
+            currentDisplayName = snap.val().displayName;
+            let game = snap.val().joinedGame;
+            if (game != "") {
+                gameRef.once("value", function(snap) {
+                        if (snap.child(game).exists() && snap.child(game).child("host").val() !== currentDisplayName) {
+                            let players = snap.child(game).val().players;
+                            playerRef.child(players).once("value", function(snap) {
+                                if (snap.child(currentUid).exists()) {
+                                    fireObj.gameState(game, true);
+                                } else {
+                                    userRef.child(currentUid).update({
+                                        joinedGame: ""
+                                    })
+                                }
+
+                            })
+
+                        } else {
+                            userRef.child(currentUid).update({
+                                joinedGame: ""
+                            })
+                        }
+                    }) //once
+            } //if
+
         }).then(function() {
             $("#user-name").text(currentDisplayName);
         })
@@ -76,7 +88,6 @@ firebase.auth().onAuthStateChanged(function(user) {
 
 
 })
-
 
 
 

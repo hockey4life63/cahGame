@@ -1,0 +1,180 @@
+#sad-face-animation {
+    margin-left: 20%;
+}
+
+#sad-face-animation p {
+    margin-left: 25%;
+    font-family: 'Frijole', cursive;
+    font-size: 40px;
+}
+
+.face {
+    border-radius: 50%;
+    background: yellow;
+    margin-top: 40px;
+    margin-left: 200px;
+    padding: 100px;
+    width: 400px;
+    height: 400px;
+    border: 2px solid #000;
+}
+
+.left-eye {
+    width: 70px;
+    background: white;
+    height: 70px;
+    border-radius: 50%;
+    border: 2px solid #000;
+}
+
+.right-eye {
+    width: 70px;
+    background: white;
+    height: 70px;
+    border-radius: 50%;
+    border: 2px solid #000;
+    margin-left: 115px;
+    margin-top: -67px;
+}
+
+.left-pupil {
+    width: 30px;
+    background: black;
+    height: 30px;
+    border-radius: 50%;
+    border: 2px solid #000;
+    margin-top: 13px;
+    margin-left: 13px;
+}
+
+.right-pupil {
+    width: 30px;
+    background: black;
+    height: 30px;
+    border-radius: 50%;
+    border: 2px solid #000;
+    margin-left: 15px;
+    margin-top: 15px;
+}
+
+.lips {
+    width: 200px;
+    height: 100px;
+    border-top-left-radius: 110px;
+    border-top-right-radius: 110px;
+    border: 5px solid black;
+    border-bottom: 0;
+}
+
+#tear-drop {
+    background: blue;
+    border: 2px solid black;
+    width: 15px;
+    height: 30px;
+    border-top-left-radius: 50%;
+    border-bottom-left-radius: 50%;
+    border-bottom-right-radius: 50%;
+    margin-top: 20px;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.fadeIn {
+    animation-name: fadeIn;
+}
+
+
+/*@keyframes slideInDown {
+    from {
+        transform: translate3d(0, -100%, 0);
+        visibility: visible;
+    }
+    to {
+        transform: translate3d(0, 0, 0);
+    }
+}
+
+.slideInDown {
+    animation-name: slideInDown;
+}
+
+.shake {
+    animation-name: shake;
+}
+
+@keyframes headShake {
+    0% {
+        transform: translateX(0);
+    }
+    6.5% {
+        transform: translateX(-6px) rotateY(-9deg);
+    }
+    18.5% {
+        transform: translateX(5px) rotateY(7deg);
+    }
+    31.5% {
+        transform: translateX(-3px) rotateY(-5deg);
+    }
+    43.5% {
+        transform: translateX(2px) rotateY(3deg);
+    }
+    50% {
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideInUp {
+    from {
+        transform: translate3d(0, 30%, 0);
+        visibility: visible;
+    }
+    to {
+        transform: translate3d(0, 0, 0);
+    }
+}
+
+.slideInUp {
+    animation-name: slideInUp;
+}
+
+@keyframes jello {
+    from,
+    11.1%,
+    to {
+        transform: none;
+    }
+    22.2% {
+        transform: skewX(-12.5deg) skewY(-12.5deg);
+    }
+    33.3% {
+        transform: skewX(6.25deg) skewY(6.25deg);
+    }
+    44.4% {
+        transform: skewX(-3.125deg) skewY(-3.125deg);
+    }
+    55.5% {
+        transform: skewX(1.5625deg) skewY(1.5625deg);
+    }
+    66.6% {
+        transform: skewX(-0.78125deg) skewY(-0.78125deg);
+    }
+    77.7% {
+        transform: skewX(0.390625deg) skewY(0.390625deg);
+    }
+    88.8% {
+        transform: skewX(-0.1953125deg) skewY(-0.1953125deg);
+    }
+}
+
+.jello {
+    animation-name: jello;
+    transform-origin: center;
+}
+*/

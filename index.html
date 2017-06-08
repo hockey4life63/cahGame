@@ -4,9 +4,13 @@
 <head>
     <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-    <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css">
     <link rel="stylesheet" type="text/css" href="assets/css/tgstyle.css">
     <link rel="stylesheet" type="text/css" href="assets/css/frontpage.css">
+    <link rel="stylesheet" type="text/css" href="assets/css/animate.min.css">
+    <link rel="stylesheet" type="text/css" href="assets/css/winner.css">
+    <link rel="stylesheet" type="text/css" href="assets/css/sadface.css">
+    <link href="https://fonts.googleapis.com/css?family=Bungee+Outline" rel="stylesheet">
     <title></title>
 </head>
 
@@ -63,7 +67,7 @@
         </form>
     </div>
     <!-- Page NAV -->
-    <nav class="navbar navbar-default hide-game-center" id="myNav">
+    <nav class="navbar navbar-default" id="myNav">
         <div class="container-fluid">
             <div class="navbar-header">
                 <a class="navbar-brand" href="#">
@@ -72,10 +76,11 @@
                 <p class="navbar-text" id="user-name"></p>
             </div>
             <!-- Trigger/Open The Modal -->
-            <button id="myBtn">Open Modal</button>
+            <button id="myBtn">Results Modal</button>
+            <button id="myBtn2">Card Modal</button>
             <ul class="nav navbar-nav navbar-right" id="nav-links">
                 <li>
-                    <a href="#">Game Center</a>
+                    <a id="nav-quit-game" href="#">Quit Game</a>
                 </li>
                 <li>
                     <a href="#" id="signOut">Sign-out</a>
@@ -86,17 +91,7 @@
     <!-- MAIN VIEW -->
     <div class="container-fluid" id="main-view">
         <div class="row">
-            <!-- The Modal -->
-            <div id="myModal" class="modal col-md-8">
-                <!-- Modal content -->
-                <div class="modal-content">
-                    <div class="modal-body">
-                        <div class="row cards" id='selectedBlack'>
-                            <!-- cards added here -->
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <!-- old modal location -->
             <div class="col-md-8" id="hideCards">
                 <!-- CARDS ROW ONE -->
                 <div class="row cards">
@@ -169,9 +164,6 @@
                             </div>
                         </div>
                     </div>
-                </div>
-                <!-- CARDS ROW TWO -->
-                <div class="row cards">
                     <div class="col-md-3">
                         <!-- card four -->
                         <div class="flip-container" id="card4">
@@ -282,76 +274,78 @@
                 </div>
             </div>
             <!-- GameCenter -->
-            <div class="col-md-4 col-md-offset-1 hide-create">
-                <div class="panel panel-default" id="join-panel">
-                    <div class="panel-heading top-bar">
-                        <h3 class="panel-title">
+            <div class="game-center">
+                <div class="col-md-4 col-md-offset-1 hide-create">
+                    <div class="panel panel-default" id="join-panel">
+                        <div class="panel-heading top-bar">
+                            <h3 class="panel-title">
                                 <span class="glyphicon glyphicon-tasks"></span>
                                 Current Games</h3>
-                        <div class="panel-body">
-                            <table class="table table-bordered table-striped" id="current-game-table">
-                                <tr>
-                                    <th>Host</th>
-                                    <th>Players</th>
-                                    <th>Cards</th>
-                                    <th></th>
-                                </tr>
-                            </table>
+                            <div class="panel-body">
+                                <table class="table table-bordered table-striped" id="current-game-table">
+                                    <tr>
+                                        <th>Host</th>
+                                        <th>Players</th>
+                                        <th>Cards</th>
+                                        <th></th>
+                                    </tr>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="col-md-3 hide-create">
-                <div class="panel panel-default" id="create-panel">
-                    <div class="panel-heading top-bar">
-                        <h3 class="panel-title">
+                <div class="col-md-3 hide-create">
+                    <div class="panel panel-default" id="create-panel">
+                        <div class="panel-heading top-bar">
+                            <h3 class="panel-title">
                                 <span class="glyphicon glyphicon-plus-sign"></span>
                                 Create Game</h3>
-                        <div class="panel-body">
-                            <form>
-                                <div class="form-group">
-                                    <label>Number of Players</label>
-                                    <select class="form-control" id="numPlayers">
-                                        <option>4</option>
-                                        <option>5</option>
-                                        <option>6</option>
-                                        <option>7</option>
-                                        <option>8</option>
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <label>Number of Cards</label>
-                                    <select class="form-control" id="numCards">
-                                        <option>5</option>
-                                        <option>6</option>
-                                        <option>7</option>
-                                        <option>8</option>
-                                        <option>9</option>
-                                        <option>10</option>
-                                    </select>
-                                </div>
-                                <button type="submit" class="col-md-6 col-md-offset-3 btn btn-primary" id="create-game">Create Game</button>
-                            </form>
+                            <div class="panel-body">
+                                <form>
+                                    <div class="form-group">
+                                        <label>Number of Players</label>
+                                        <select class="form-control" id="numPlayers">
+                                            <option>4</option>
+                                            <option>5</option>
+                                            <option>6</option>
+                                            <option>7</option>
+                                            <option>8</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Number of Cards</label>
+                                        <select class="form-control" id="numCards">
+                                            <option>5</option>
+                                            <option>6</option>
+                                            <option>7</option>
+                                            <option>8</option>
+                                            <option>9</option>
+                                            <option>10</option>
+                                        </select>
+                                    </div>
+                                    <button type="submit" class="col-md-6 col-md-offset-3 btn btn-primary" id="create-game">Create Game</button>
+                                </form>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="col-md-4 hide-create">
-                <div class="panel panel-default" id="chat-well">
-                    <div class="panel-heading top-bar">
-                        <div class="col-md-8 col-xs-8">
-                            <h3 class="panel-title"><span class="glyphicon glyphicon-comment"></span> Global Chat</h3>
+                <div class="col-md-4 hide-create">
+                    <div class="panel panel-default" id="chat-well">
+                        <div class="panel-heading top-bar">
+                            <div class="col-md-8 col-xs-8">
+                                <h3 class="panel-title"><span class="glyphicon glyphicon-comment"></span> Global Chat</h3>
+                            </div>
                         </div>
-                    </div>
-                    <div class="panel-body msg_container_base" id="global-chat">
-                        <!-- messages -->
-                    </div>
-                    <div class="panel-footer">
-                        <div class="input-group">
-                            <input id="global-input" type="text" class="form-control input-sm chat_input" placeholder="Write your message here..." />
-                            <span class="input-group-btn">
+                        <div class="panel-body msg_container_base" id="global-chat">
+                            <!-- messages -->
+                        </div>
+                        <div class="panel-footer">
+                            <div class="input-group">
+                                <input id="global-input" type="text" class="form-control input-sm chat_input" placeholder="Write your message here..." />
+                                <span class="input-group-btn">
                                 <button type='submit' class="btn btn-primary btn-sm" id="btn-global-chat">Send</button>
                             </span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -366,7 +360,7 @@
                                 Player Info | Current Turn: <span id="current-turn-name"></span>
                             </h3>
                             <div class="panel-body ">
-                                <table class="table table-bordered table-striped " id="create-table">
+                                <table class="table table-bordered table-striped " id="create-results-table">
                                     <tr id="row0">
                                     </tr>
                                     <tr id="row1">
@@ -412,12 +406,440 @@
             </div>
         </div>
     </div>
+    <div id="winner-animation" class="container active">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="container">
+                    <div class="up">
+                        <div class='animation animated zoomOutUp'>
+                        </div>
+                        <div class='animation animated zoomOutRight'>
+                        </div>
+                        <div class='animation animated zoomOutLeft'>
+                        </div>
+                        <div class='animation animated zoomOutDown'>
+                        </div>
+                        <div class='animation animated zoomOutUp'>
+                        </div>
+                        <div class='animation animated zoomOutRight'>
+                        </div>
+                        <div class='animation animated zoomOutLeft'>
+                        </div>
+                        <div class='animation animated zoomOutDown'>
+                        </div>
+                        <div class='animation animated zoomOutUp'>
+                        </div>
+                        <div class='animation animated zoomOutRight'>
+                        </div>
+                        <div class='animation animated zoomOutLeft'>
+                        </div>
+                        <div class='animation animated zoomOutDown'>
+                        </div>
+                        <div class='animation animated zoomOutUp'>
+                        </div>
+                        <div class='animation animated zoomOutRight'>
+                        </div>
+                        <div class='animation animated zoomOutLeft'>
+                        </div>
+                        <div class='animation animated zoomOutDown'>
+                        </div>
+                        <div class='animation animated zoomOutUp'>
+                        </div>
+                        <div class='animation animated zoomOutRight'>
+                        </div>
+                        <div class='animation animated zoomOutLeft'>
+                        </div>
+                        <div class='animation animated zoomOutDown'>
+                        </div>
+                        <div class='animation animated zoomOutUp'>
+                        </div>
+                        <div class='animation animated zoomOutRight'>
+                        </div>
+                        <div class='animation animated zoomOutLeft'>
+                        </div>
+                        <div class='animation animated zoomOutDown'>
+                        </div>
+                        <div class='animation animated zoomOutUp'>
+                        </div>
+                        <div class='animation animated zoomOutRight'>
+                        </div>
+                        <div class='animation animated zoomOutLeft'>
+                        </div>
+                        <div class='animation animated zoomOutDown'>
+                        </div>
+                        <div class='animation animated zoomOutUp'>
+                        </div>
+                        <div class='animation animated zoomOutRight'>
+                        </div>
+                        <div class='animation animated zoomOutLeft'>
+                        </div>
+                        <div class='animation animated zoomOutDown'>
+                        </div>
+                        <div class='animation animated zoomOutUp'>
+                        </div>
+                        <div class='animation animated zoomOutRight'>
+                        </div>
+                        <div class='animation animated zoomOutLeft'>
+                        </div>
+                        <div class='animation animated zoomOutDown'>
+                        </div>
+                        <div class='animation animated zoomOutUp'>
+                        </div>
+                        <div class='animation animated zoomOutRight'>
+                        </div>
+                        <div class='animation animated zoomOutLeft'>
+                        </div>
+                        <div class='animation animated zoomOutDown'>
+                        </div>
+                        <div class='animation animated zoomOutUp'>
+                        </div>
+                        <div class='animation animated zoomOutRight'>
+                        </div>
+                        <div class='animation animated zoomOutLeft'>
+                        </div>
+                        <div class='animation animated zoomOutDown'>
+                        </div>
+                        <div class='animation animated zoomOutUp'>
+                        </div>
+                        <div class='animation animated zoomOutRight'>
+                        </div>
+                        <div class='animation animated zoomOutLeft'>
+                        </div>
+                        <div class='animation animated zoomOutDown'>
+                        </div>
+                        <div class='animation animated zoomOutUp'>
+                        </div>
+                        <div class='animation animated zoomOutRight'>
+                        </div>
+                        <div class='animation animated zoomOutLeft'>
+                        </div>
+                        <div class='animation animated zoomOutDown'>
+                        </div>
+                        <div class='animation animated zoomOutUp'>
+                        </div>
+                        <div class='animation animated zoomOutRight'>
+                        </div>
+                        <div class='animation animated zoomOutLeft'>
+                        </div>
+                        <div class='animation animated zoomOutDown'>
+                        </div>
+                        <div class='animation animated zoomOutDown'>
+                        </div>
+                        <div class='animation animated zoomOutUp'>
+                        </div>
+                        <div class='animation animated zoomOutRight'>
+                        </div>
+                        <div class='animation animated zoomOutLeft'>
+                        </div>
+                        <div class='animation animated zoomOutDown'>
+                        </div>
+                        <div class='animation animated zoomOutDown'>
+                        </div>
+                        <div class='animation animated zoomOutUp'>
+                        </div>
+                        <div class='animation animated zoomOutRight'>
+                        </div>
+                        <div class='animation animated zoomOutLeft'>
+                        </div>
+                        <div class='animation animated zoomOutDown'>
+                        </div>
+                        <div class='animation animated zoomOutDown'>
+                        </div>
+                        <div class='animation animated zoomOutUp'>
+                        </div>
+                        <div class='animation animated zoomOutRight'>
+                        </div>
+                        <div class='animation animated zoomOutLeft'>
+                        </div>
+                        <div class='animation animated zoomOutDown'>
+                        </div>
+                        <div class='animation animated zoomOutDown'>
+                        </div>
+                        <div class='animation animated zoomOutUp'>
+                        </div>
+                        <div class='animation animated zoomOutRight'>
+                        </div>
+                        <div class='animation animated zoomOutLeft'>
+                        </div>
+                        <div class='animation animated zoomOutDown'>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <p class="text animated zoomIn">winner</p>
+                </div>
+            </div>
+        </div>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="container">
+                        <div class="up">
+                            <div class='animation animated zoomOutUp'>
+                            </div>
+                            <div class='animation animated zoomOutRight'>
+                            </div>
+                            <div class='animation animated zoomOutLeft'>
+                            </div>
+                            <div class='animation animated zoomOutDown'>
+                            </div>
+                            <div class='animation animated zoomOutUp'>
+                            </div>
+                            <div class='animation animated zoomOutRight'>
+                            </div>
+                            <div class='animation animated zoomOutLeft'>
+                            </div>
+                            <div class='animation animated zoomOutDown'>
+                            </div>
+                            <div class='animation animated zoomOutUp'>
+                            </div>
+                            <div class='animation animated zoomOutRight'>
+                            </div>
+                            <div class='animation animated zoomOutLeft'>
+                            </div>
+                            <div class='animation animated zoomOutDown'>
+                            </div>
+                            <div class='animation animated zoomOutUp'>
+                            </div>
+                            <div class='animation animated zoomOutRight'>
+                            </div>
+                            <div class='animation animated zoomOutLeft'>
+                            </div>
+                            <div class='animation animated zoomOutDown'>
+                            </div>
+                            <div class='animation animated zoomOutUp'>
+                            </div>
+                            <div class='animation animated zoomOutRight'>
+                            </div>
+                            <div class='animation animated zoomOutLeft'>
+                            </div>
+                            <div class='animation animated zoomOutDown'>
+                            </div>
+                            <div class='animation animated zoomOutUp'>
+                            </div>
+                            <div class='animation animated zoomOutRight'>
+                            </div>
+                            <div class='animation animated zoomOutLeft'>
+                            </div>
+                            <div class='animation animated zoomOutDown'>
+                            </div>
+                            <div class='animation animated zoomOutUp'>
+                            </div>
+                            <div class='animation animated zoomOutRight'>
+                            </div>
+                            <div class='animation animated zoomOutLeft'>
+                            </div>
+                            <div class='animation animated zoomOutDown'>
+                            </div>
+                            <div class='animation animated zoomOutUp'>
+                            </div>
+                            <div class='animation animated zoomOutRight'>
+                            </div>
+                            <div class='animation animated zoomOutLeft'>
+                            </div>
+                            <div class='animation animated zoomOutDown'>
+                            </div>
+                            <div class='animation animated zoomOutUp'>
+                            </div>
+                            <div class='animation animated zoomOutRight'>
+                            </div>
+                            <div class='animation animated zoomOutLeft'>
+                            </div>
+                            <div class='animation animated zoomOutDown'>
+                            </div>
+                            <div class='animation animated zoomOutUp'>
+                            </div>
+                            <div class='animation animated zoomOutRight'>
+                            </div>
+                            <div class='animation animated zoomOutLeft'>
+                            </div>
+                            <div class='animation animated zoomOutDown'>
+                            </div>
+                            <div class='animation animated zoomOutUp'>
+                            </div>
+                            <div class='animation animated zoomOutRight'>
+                            </div>
+                            <div class='animation animated zoomOutLeft'>
+                            </div>
+                            <div class='animation animated zoomOutDown'>
+                            </div>
+                            <div class='animation animated zoomOutUp'>
+                            </div>
+                            <div class='animation animated zoomOutRight'>
+                            </div>
+                            <div class='animation animated zoomOutLeft'>
+                            </div>
+                            <div class='animation animated zoomOutDown'>
+                            </div>
+                            <div class='animation animated zoomOutUp'>
+                            </div>
+                            <div class='animation animated zoomOutRight'>
+                            </div>
+                            <div class='animation animated zoomOutLeft'>
+                            </div>
+                            <div class='animation animated zoomOutDown'>
+                            </div>
+                            <div class='animation animated zoomOutUp'>
+                            </div>
+                            <div class='animation animated zoomOutRight'>
+                            </div>
+                            <div class='animation animated zoomOutLeft'>
+                            </div>
+                            <div class='animation animated zoomOutDown'>
+                            </div>
+                            <div class='animation animated zoomOutDown'>
+                            </div>
+                            <div class='animation animated zoomOutUp'>
+                            </div>
+                            <div class='animation animated zoomOutRight'>
+                            </div>
+                            <div class='animation animated zoomOutLeft'>
+                            </div>
+                            <div class='animation animated zoomOutDown'>
+                            </div>
+                            <div class='animation animated zoomOutDown'>
+                            </div>
+                            <div class='animation animated zoomOutUp'>
+                            </div>
+                            <div class='animation animated zoomOutRight'>
+                            </div>
+                            <div class='animation animated zoomOutLeft'>
+                            </div>
+                            <div class='animation animated zoomOutDown'>
+                            </div>
+                            <div class='animation animated zoomOutDown'>
+                            </div>
+                            <div class='animation animated zoomOutUp'>
+                            </div>
+                            <div class='animation animated zoomOutRight'>
+                            </div>
+                            <div class='animation animated zoomOutLeft'>
+                            </div>
+                            <div class='animation animated zoomOutDown'>
+                            </div>
+                            <div class='animation animated zoomOutDown'>
+                            </div>
+                            <div class='animation animated zoomOutUp'>
+                            </div>
+                            <div class='animation animated zoomOutRight'>
+                            </div>
+                            <div class='animation animated zoomOutLeft'>
+                            </div>
+                            <div class='animation animated zoomOutDown'>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="sad-face-animation" class="active fadeIn">
+        <div class="face">
+            <div class="left-eye">
+                <div class="left-pupil animated shake">
+                </div>
+            </div>
+            <div class="right-eye">
+                <div class="right-pupil animated shake">
+                </div>
+            </div>
+            <div id="tear-drop" class="animated slideInDown">
+            </div>
+            <div class="lips animated slideInUp">
+            </div>
+        </div>
+    </div>
+    <!-- Modals -->
+    <!-- Game End Modal -->
+    <div id="endModal" class="modal col-md-12">
+        <!-- Modal content -->
+        <div class="modal-content">
+            <div class="modal-header" id='winner'>
+                <h2 class="text-center">Congratulations! You're the Winner!</h2>
+            </div>
+            <div class="modal-header" id='loser'>
+                <h2 class="text-center">Sorry! You'll get them next time :(</h2>
+            </div>
+            <div class="modal-body">
+                <!-- Results will go here -->
+                <div class="row">
+                    <div class="col-md-5 col-md-offset-1">
+                        <div class="panel panel-default" id="game-results">
+                            <div class="panel-heading top-bar ">
+                                <h3 class="panel-title "><span class="glyphicon glyphicon-list"></span> Game Results<span id="current-turn-name"></span></h3>
+                                <div class="panel-body ">
+                                    <table class="table table-bordered table-striped " id="create-table">
+                                        <tr id="winnerRow0">
+                                        </tr>
+                                        <tr id="winnerRow1">
+                                        </tr>
+                                        <tr id="winnerRow2">
+                                        </tr>
+                                        <tr id="winnerRow3">
+                                        </tr>
+                                    </table>
+                                    <button type='' class="col-md-4 col-md-offset-4 btn btn-danger quit-btn" id="btn-quit-game">Quit Game</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Chat will go here -->
+                    <div class="panel panel-default col-md-5" id="results-chat">
+                        <div class="panel-heading top-bar">
+                            <h3 class="panel-title">
+                                    <span class="glyphicon glyphicon-comment"></span>
+                                    Group Chat
+                                </h3>
+                        </div>
+                        <div class="panel-body msg_container_base" id="results-chat-body">
+                            <!-- messages -->
+                        </div>
+                        <div class="panel-footer">
+                            <div class="input-group">
+                                <input id="btn-result-input" type="text" class="form-control input-sm chat_input" placeholder="Write your message here..." />
+                                <span class="input-group-btn">
+                                    <button type='submit' class="btn btn-primary btn-sm" id="btn-result-chat">Send</button>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Reveal Modal -->
+    <div id="myModal" class="modal col-md-8">
+        <!-- Modal content -->
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="row cards" id='selectedBlack'>
+                    <!-- cards added here -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="cd-popup" role="alert">
+        <div class="cd-popup-container">
+            <p>Are you sure you want quit this game?</p>
+            <ul class="cd-buttons">
+                <li><a id="quit-game-confirm" href="#">Yes</a></li>
+                <li><a href="">No</a></li>
+            </ul>
+        </div>
+        <!-- cd-popup-container -->
+    </div>
+    <!-- cd-popup -->
     <script src="https://code.jquery.com/jquery-3.2.1.min.js " integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin=" anonymous "></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment-with-locales.min.js"></script>
     <script src="https://www.gstatic.com/firebasejs/4.0.0/firebase.js "></script>
-    <script src="http://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
     <script type="text/javascript" src="assets/js/randomFace.js"></script>
     <script type="text/javascript " src="assets/js/frontpage.js "></script>
+    <script type="text/javascript " src="assets/js/reJoin.js "></script>
     <script type="text/javascript " src="assets/js/gameState.js "></script>
     <script type="text/javascript " src="assets/js/global.js "></script>
     <script type="text/javascript " src="assets/js/makeElement.js "></script>
